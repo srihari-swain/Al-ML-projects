@@ -1,5 +1,4 @@
-# Al-ML-projects
-A collection of AI/ML projects and notebooks exploring algorithms, model building, and real-world use cases.
+
 # Web Content Q&A Tool
 
 A Python-based application that scrapes webpage content, creates embeddings, and answers questions based on the ingested information using a Retrieval-Augmented Generation (RAG) pipeline.
