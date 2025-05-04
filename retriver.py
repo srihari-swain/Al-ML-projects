@@ -11,19 +11,14 @@ load_dotenv()
 
 class Retriver:
     def __init__(self, vector_store, sources):
-        os.environ["GROQ_API_KEY"] = os.getenv('GROQ_API_KEY')
+
+        # os.environ["GROQ_API_KEY"] = ''
+        
         self.llm = init_chat_model("llama3-8b-8192", model_provider="groq")
         self.vector_store = vector_store
         self.sources = sources
-
-
-    def answer_question(self, question, k=4):
-        """Answer a question using the ingested content."""
-        if not self.vector_store:
-            return "Please ingest some URLs first."
-        
-        # Create a custom prompt that instructs the model to use only the retrieved content
-        prompt_template = """
+        self.k = 4
+        self.prompt_template = """
         You are a helpful assistant that answers questions strictly based on the retrieved content.
         
         Retrieved content:
@@ -39,23 +34,33 @@ class Retriver:
         
         Answer:
         """
-        
-        PROMPT = PromptTemplate(
-            template=prompt_template,
+        self.PROMPT = PromptTemplate(
+            template=self.prompt_template,
             input_variables=["context", "question"]
         )
-        
-        # Create the retrieval QA chain
-        qa_chain = RetrievalQA.from_chain_type(
+        self.qa_chain = RetrievalQA.from_chain_type(
             llm=self.llm,
             chain_type="stuff",
-            retriever=self.vector_store.as_retriever(search_kwargs={"k": k}),
-            chain_type_kwargs={"prompt": PROMPT},
+            retriever=self.vector_store.as_retriever(search_kwargs={"k": self.k}),
+            chain_type_kwargs={"prompt": self.PROMPT},
             return_source_documents=True
         )
+
+    def answer_question(self, question, k=4):
+        """Answer a question using the ingested content."""
+        if not self.vector_store:
+            return "Please ingest some URLs first."
+        
+        # Create a custom prompt that instructs the model to use only the retrieved content
+
+        
+
+        
+        # Create the retrieval QA chain
+
         
         # Get the answer
-        result = qa_chain.invoke({"query": question})
+        result = self.qa_chain.invoke({"query": question})
         
         # Extract source URLs from the retrieved documents
         source_docs = result.get("source_documents", [])

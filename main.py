@@ -6,7 +6,7 @@ if __name__ == '__main__':
         
     urls = [
         
-        # "https://en.wikipedia.org/wiki/Machine_learning"
+        "https://en.wikipedia.org/wiki/Machine_learning"
     ]
 
     vectore_store_instance = DB_urlingection()
